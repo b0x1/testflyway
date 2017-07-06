@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.gepardec.playground</groupId>
+  <artifactId>test-flyway</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Flyway configuration -->
+    <flyway.version>4.2.0</flyway.version>
+
+    <!-- Artifacts provided by Wildfly 10 -->
+    <org.wildfly.version>10.1.0.Final</org.wildfly.version>
+    <com.h2database.version>1.3.173</com.h2database.version>
+
+    <!-- Plugin properties -->
+    <wildfly-maven-plugin.version>1.1.0.Final</wildfly-maven-plugin.version>
+
+    <!-- Maven Wildfly Plugin configuration -->
+    <wildfly.home>/home/bxia/Applications/wildfly-${org.wildfly.version}/</wildfly.home>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.wildfly.bom</groupId>
+        <artifactId>wildfly-javaee7</artifactId>
+        <version>${org.wildfly.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${com.h2database.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!--&lt;!&ndash; Import the CDI API, we use provided scope as the API is included in WildFly &ndash;&gt;-->
+    <!--<dependency>-->
+      <!--<groupId>javax.enterprise</groupId>-->
+      <!--<artifactId>cdi-api</artifactId>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+
+    <!--&lt;!&ndash; Import the Common Annotations API (JSR-250), we use provided scope as the API is included in WildFly &ndash;&gt;-->
+    <!--<dependency>-->
+      <!--<groupId>org.jboss.spec.javax.annotation</groupId>-->
+      <!--<artifactId>jboss-annotations-api_1.2_spec</artifactId>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+
+    <dependency>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+      <version>${flyway.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>test-flyway</finalName>
+
+    <plugins>
+      <!--<plugin>-->
+        <!--<artifactId>maven-jar-plugin</artifactId>-->
+        <!--<configuration>-->
+          <!--<archive>-->
+            <!--<manifest>-->
+              <!--<addClasspath>true</addClasspath>-->
+              <!--<classpathPrefix>lib/</classpathPrefix>-->
+              <!--<mainClass>testflyway.Main</mainClass>-->
+            <!--</manifest>-->
+          <!--</archive>-->
+        <!--</configuration>-->
+      <!--</plugin>-->
+
+      <!--<plugin>-->
+        <!--<artifactId>maven-dependency-plugin</artifactId>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<phase>package</phase>-->
+            <!--<goals>-->
+              <!--<goal>copy-dependencies</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+              <!--<outputDirectory>${project.build.directory}/lib</outputDirectory>-->
+            <!--</configuration>-->
+          <!--</execution>-->
+        <!--</executions>-->
+      <!--</plugin>-->
+
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <!-- Java EE doesn't require web.xml, Maven needs to catch up! -->
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.wildfly.plugins</groupId>
+        <artifactId>wildfly-maven-plugin</artifactId>
+        <version>${wildfly-maven-plugin.version}</version>
+        <configuration>
+          <jboss-home>${wildfly.home}</jboss-home>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+
+</project>
